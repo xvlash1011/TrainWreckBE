@@ -2,6 +2,7 @@ import axios from 'axios';
 import fs from 'fs';
 import path from 'path';
 
+
 // Sleep helper to avoid API banning
 const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
 
@@ -66,7 +67,7 @@ async function fetchTrainDetails(tauId: number) {
 /**
  * Merge segments with the same TrainCode.
  */
-function mergeTrainSegments(trainCode: string, segments: any[][]): TrainSchedule {
+function mergeTrainSegments(trainCode: string, segments: any[][], realTauId: number): TrainSchedule {
   // Flatten all stops across segments
   const allStops = segments.flat();
 
@@ -88,7 +89,7 @@ function mergeTrainSegments(trainCode: string, segments: any[][]): TrainSchedule
   });
 
   return {
-    tauId: Math.random(), // Dummy merged ID
+    tauId: realTauId,
     trainCode: trainCode,
     stations: sortedStops.map(s => ({
       stationName: s.TenGa,
@@ -134,7 +135,7 @@ export async function fetchAllAndCacheSchedules() {
 
   console.log(`Found ${rawTrainsToFetch.length} train instances. Fetching details...`);
   
-  const fetchedByCodeAndDate: Record<string, any[][]> = {};
+  const fetchedByCodeAndDate: Record<string, { stops: any[][], tauId: number }> = {};
 
   for (const t of rawTrainsToFetch) {
     let details = await fetchTrainDetails(t.tauId);
@@ -180,10 +181,10 @@ export async function fetchAllAndCacheSchedules() {
 
     const cacheKey = `${t.date}_${t.code}`;
     if (!fetchedByCodeAndDate[cacheKey]) {
-      fetchedByCodeAndDate[cacheKey] = [];
+      fetchedByCodeAndDate[cacheKey] = { stops: [], tauId: t.tauId };
     }
     
-    fetchedByCodeAndDate[cacheKey].push(stops);
+    fetchedByCodeAndDate[cacheKey].stops.push(stops);
     
     await sleep(50); // Be nice to the API
   }
@@ -191,15 +192,17 @@ export async function fetchAllAndCacheSchedules() {
   console.log(`Deduplicating and merging segments...`);
   const finalizedSchedules: TrainSchedule[] = [];
   
-  for (const [key, segments] of Object.entries(fetchedByCodeAndDate)) {
+  for (const [key, data] of Object.entries(fetchedByCodeAndDate)) {
     const code = key.split('_')[1];
-    if (segments.flat().length === 0) continue;
+    if (data.stops.flat().length === 0) continue;
     
-    const merged = mergeTrainSegments(code, segments);
+    const merged = mergeTrainSegments(code, data.stops, data.tauId);
     finalizedSchedules.push(merged);
   }
 
-  const outPath = path.join(process.cwd(), 'current_schedules.json');
+  const outPath = path.join(__dirname, '..', 'current_schedules.json');
   fs.writeFileSync(outPath, JSON.stringify(finalizedSchedules, null, 2));
   console.log(`Saved ${finalizedSchedules.length} complete train journeys to schedules cache.`);
+
+
 }

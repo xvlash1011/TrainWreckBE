@@ -41,7 +41,7 @@ async function run() {
       features
     };
     
-    const outPath = path.join(process.cwd(), 'vietnam_railways.geojson');
+    const outPath = path.join(__dirname, '..', 'vietnam_railways.geojson');
     fs.writeFileSync(outPath, JSON.stringify(geojson, null, 2));
     console.log(`Generated GeoJSON at ${outPath} with ${features.length} track segments.`);
   } catch (err: any) {

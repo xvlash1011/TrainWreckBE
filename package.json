@@ -4,9 +4,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "ts-node src/index.ts",
-    "fetch": "ts-node src/runFetch.ts",
-    "build": "npx tsc",
-    "start": "node dist/src/index.js"
+    "fetch": "ts-node src/runFetch.ts"
   },
   "keywords": [],
   "author": "",
@@ -16,15 +14,21 @@
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/node-cron": "^3.0.11",
+    "@types/tough-cookie": "^4.0.5",
     "axios": "^1.14.0",
+    "axios-cookiejar-support": "^7.0.0",
     "cors": "^2.8.6",
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
     "node-cron": "^4.2.1",
+    "node-schedule": "^2.1.1",
+    "puppeteer": "^24.43.0",
+    "tough-cookie": "^6.0.1",
     "ts-node": "^10.9.2",
     "typescript": "^6.0.2"
   },
   "devDependencies": {
-    "@types/node": "^25.5.0"
+    "@types/node": "^25.5.0",
+    "@types/node-schedule": "^2.1.8"
   }
 }
