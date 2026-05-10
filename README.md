@@ -1,17 +1,18 @@
-# TrainWreck Backend
+# Railway Deployment Configuration
 
-## Environment Variables for Railway.com
+Liệt kê các biến môi trường (Environment Variables) cần thiết để cấu hình trên Railway:
 
-Configure these environment variables in your Railway project settings:
+```text
+PORT=3001
+FRONTEND_URL=https://your-frontend-domain.com
+DATABASE_URL=your_database_connection_string_if_needed
+```
 
-| Variable | Description | Example Value |
-| :--- | :--- | :--- |
-| `PORT` | The port the server will listen on (Railway provides this automatically) | `3001` |
-| `FRONTEND_URL` | The URL of your frontend application to allow CORS | `https://your-frontend.railway.app` |
-| `DATABASE_URL` | (If applicable) The connection string for your database | `postgresql://...` |
+## Các lệnh quan trọng:
+- **Build Command:** `npm run build`
+- **Start Command:** `npm run start`
 
-## Deployment Notes
-
-- The build command is `npm run build`.
-- The start command is `npm run start`.
-- Ensure all necessary JSON and GeoJSON files are present in the root directory if they are not generated during the build process.
+## Ghi chú:
+- Railway sẽ tự động cung cấp biến `PORT`, bạn có thể không cần điền thủ công trừ khi muốn override.
+- `FRONTEND_URL` dùng để cấu hình CORS, hãy điền domain của ứng dụng Frontend của bạn.
+- Đảm bảo các file dữ liệu (`.json`, `.geojson`) đã được generate và có mặt trong project.

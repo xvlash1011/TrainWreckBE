@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import fs from 'fs';
@@ -8,7 +9,11 @@ import { resolveTrainConflicts } from './yieldEngine';
 import './cron';
 
 const app = express();
-app.use(cors());
+app.use(cors({
+    origin: process.env.FRONTEND_URL || '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true
+}));
 
 app.get('/api/stations', (req, res) => {
     const p = path.join(__dirname, '..', 'stations_hydrated.json');
