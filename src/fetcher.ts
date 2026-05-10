@@ -199,7 +199,7 @@ export async function fetchAllAndCacheSchedules() {
     finalizedSchedules.push(merged);
   }
 
-  const outPath = path.join(__dirname, '..', 'current_schedules.json');
+  const outPath = path.join(process.cwd(), 'current_schedules.json');
   fs.writeFileSync(outPath, JSON.stringify(finalizedSchedules, null, 2));
   console.log(`Saved ${finalizedSchedules.length} complete train journeys to schedules cache.`);
 }

@@ -55,7 +55,7 @@ async function run() {
       return { ...station, lat: null, lon: null, source: 'missing' };
     });
 
-    const outPath = path.join(__dirname, '..', 'stations_hydrated.json');
+    const outPath = path.join(process.cwd(), 'stations_hydrated.json');
     fs.writeFileSync(outPath, JSON.stringify(hydrated, null, 2));
     
     const missingCount = hydrated.filter((h: any) => !h.lat).length;
