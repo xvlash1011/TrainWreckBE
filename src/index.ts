@@ -16,19 +16,19 @@ app.use(cors({
 }));
 
 app.get('/api/stations', (req, res) => {
-    const p = path.join(__dirname, '..', 'stations_hydrated.json');
+    const p = path.join(process.cwd(), 'stations_hydrated.json');
     if (!fs.existsSync(p)) return res.status(404).json({ error: "Hydrated stations missing. Run hydrateStations script." });
     res.json(JSON.parse(fs.readFileSync(p, 'utf8')));
 });
 
 app.get('/api/tracks', (req, res) => {
-    const p = path.join(__dirname, '..', 'vietnam_railways.geojson');
+    const p = path.join(process.cwd(), 'vietnam_railways.geojson');
     if (!fs.existsSync(p)) return res.status(404).json({ error: "Tracks geojson missing. Run generateGeoJSON script." });
     res.json(JSON.parse(fs.readFileSync(p, 'utf8')));
 });
 
 app.get('/api/schedule', (req, res) => {
-    const p = path.join(__dirname, '..', 'current_schedules.json');
+    const p = path.join(process.cwd(), 'current_schedules.json');
     if (!fs.existsSync(p)) return res.status(503).json({ error: "Schedules fetching in progress." });
 
     let rawSchedules = [];

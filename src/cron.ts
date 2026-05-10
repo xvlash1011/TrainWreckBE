@@ -12,7 +12,7 @@ cron.schedule('59 23 * * *', async () => {
 // Run once on startup if the cache is missing
 const fs = require('fs');
 const path = require('path');
-const cachePath = path.join(__dirname, '..', 'current_schedules.json');
+const cachePath = path.join(process.cwd(), 'current_schedules.json');
 
 if (!fs.existsSync(cachePath)) {
     console.log('[Init] No schedule cache found. Bootstrapping data...');
