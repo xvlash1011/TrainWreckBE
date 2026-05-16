@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "ts-node src/index.ts",
     "fetch": "ts-node src/runFetch.ts",
+    "vexere": "ts-node src/runVexere.ts",
     "build": "tsc",
     "start": "node dist/src/index.js"
   },
