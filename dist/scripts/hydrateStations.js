@@ -51,7 +51,7 @@ async function run() {
             // Missing
             return { ...station, lat: null, lon: null, source: 'missing' };
         });
-        const outPath = path_1.default.join(process.cwd(), 'stations_hydrated.json');
+        const outPath = path_1.default.join(__dirname, '..', 'stations_hydrated.json');
         fs_1.default.writeFileSync(outPath, JSON.stringify(hydrated, null, 2));
         const missingCount = hydrated.filter((h) => !h.lat).length;
         console.log(`Successfully hydrated stations. Saved to ${outPath}. Missing coordinates for ${missingCount} minor stations.`);

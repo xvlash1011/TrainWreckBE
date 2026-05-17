@@ -5,8 +5,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const node_cron_1 = __importDefault(require("node-cron"));
 const fetcher_1 = require("./fetcher");
-const fs_1 = __importDefault(require("fs"));
-const path_1 = __importDefault(require("path"));
 // Run at 23:59 GMT+7 every night
 node_cron_1.default.schedule('59 23 * * *', async () => {
     console.log('[Cron] Fetching tomorrow and day after schedules at 23:59 GMT+7...');
@@ -15,8 +13,10 @@ node_cron_1.default.schedule('59 23 * * *', async () => {
     timezone: 'Asia/Ho_Chi_Minh'
 });
 // Run once on startup if the cache is missing
-const cachePath = path_1.default.join(process.cwd(), 'current_schedules.json');
-if (!fs_1.default.existsSync(cachePath)) {
+const fs = require('fs');
+const path = require('path');
+const cachePath = path.join(process.cwd(), 'current_schedules.json');
+if (!fs.existsSync(cachePath)) {
     console.log('[Init] No schedule cache found. Bootstrapping data...');
     (0, fetcher_1.fetchAllAndCacheSchedules)();
 }

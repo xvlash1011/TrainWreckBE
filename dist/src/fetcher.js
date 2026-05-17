@@ -56,7 +56,7 @@ async function fetchTrainDetails(tauId) {
 /**
  * Merge segments with the same TrainCode.
  */
-function mergeTrainSegments(trainCode, segments) {
+function mergeTrainSegments(trainCode, segments, realTauId) {
     // Flatten all stops across segments
     const allStops = segments.flat();
     // Deduplicate stops by station code and sort by arrival time
@@ -76,7 +76,7 @@ function mergeTrainSegments(trainCode, segments) {
         return new Date(a.NgayGioDen || a.NgayGioDi).getTime() - new Date(b.NgayGioDen || b.NgayGioDi).getTime();
     });
     return {
-        tauId: Math.random(), // Dummy merged ID
+        tauId: realTauId,
         trainCode: trainCode,
         stations: sortedStops.map(s => ({
             stationName: s.TenGa,
@@ -150,18 +150,18 @@ async function fetchAllAndCacheSchedules() {
         }
         const cacheKey = `${t.date}_${t.code}`;
         if (!fetchedByCodeAndDate[cacheKey]) {
-            fetchedByCodeAndDate[cacheKey] = [];
+            fetchedByCodeAndDate[cacheKey] = { stops: [], tauId: t.tauId };
         }
-        fetchedByCodeAndDate[cacheKey].push(stops);
+        fetchedByCodeAndDate[cacheKey].stops.push(stops);
         await sleep(50); // Be nice to the API
     }
     console.log(`Deduplicating and merging segments...`);
     const finalizedSchedules = [];
-    for (const [key, segments] of Object.entries(fetchedByCodeAndDate)) {
+    for (const [key, data] of Object.entries(fetchedByCodeAndDate)) {
         const code = key.split('_')[1];
-        if (segments.flat().length === 0)
+        if (data.stops.flat().length === 0)
             continue;
-        const merged = mergeTrainSegments(code, segments);
+        const merged = mergeTrainSegments(code, data.stops, data.tauId);
         finalizedSchedules.push(merged);
     }
     const outPath = path_1.default.join(process.cwd(), 'current_schedules.json');

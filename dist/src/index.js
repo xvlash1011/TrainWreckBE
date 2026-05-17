@@ -12,9 +12,9 @@ const yieldEngine_1 = require("./yieldEngine");
 // Import cron to ensure it runs
 require("./cron");
 const app = (0, express_1.default)();
-// Configure CORS to allow requests from FRONTEND_URL
 app.use((0, cors_1.default)({
     origin: process.env.FRONTEND_URL || '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true
 }));
 app.get('/api/stations', (req, res) => {
@@ -51,4 +51,5 @@ const port = process.env.PORT || 3001;
 const host = '0.0.0.0';
 app.listen(Number(port), host, () => {
     console.log(`Backend Server running on http://${host}:${port}`);
+    console.log(`Local network access at http://100.74.23.86:${port}`);
 });
