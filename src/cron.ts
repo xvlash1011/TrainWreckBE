@@ -9,12 +9,9 @@ cron.schedule('59 23 * * *', async () => {
     timezone: 'Asia/Ho_Chi_Minh'
 });
 
-// Run once on startup if the cache is missing
-const fs = require('fs');
-const path = require('path');
-const cachePath = path.join(process.cwd(), 'current_schedules.json');
-
-if (!fs.existsSync(cachePath)) {
-    console.log('[Init] No schedule cache found. Bootstrapping data...');
-    fetchAllAndCacheSchedules();
-}
+// Always fetch on startup to ensure fresh data in production environments
+// (file-based cache is NOT reliable across deploys/restarts on Railway)
+console.log('[Init] Server starting — fetching latest schedules from API...');
+fetchAllAndCacheSchedules()
+    .then(() => console.log('[Init] Schedule bootstrap complete.'))
+    .catch((err) => console.error('[Init] Schedule bootstrap FAILED:', err));

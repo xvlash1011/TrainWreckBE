@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "ts-node src/index.ts",
     "fetch": "ts-node src/runFetch.ts",
-    "build": "npm run fetch && tsc",
+    "build": "tsc",
     "start": "node dist/src/index.js"
   },
   "keywords": [],
