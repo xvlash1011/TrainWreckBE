@@ -104,11 +104,11 @@ export async function fetchAllAndCacheSchedules() {
   const dates = [];
   const today = new Date();
   
-  // Today, Tomorrow, Day After
+  // Today, Tomorrow, Day After — calculated in Vietnam time (UTC+7)
   for (let i = 0; i < 3; i++) {
-    const d = new Date(today);
-    d.setDate(today.getDate() + i);
-    dates.push(d.toISOString().split('T')[0]);
+    const d = new Date(today.getTime() + 7 * 60 * 60 * 1000); // shift to UTC+7
+    d.setUTCDate(d.getUTCDate() + i);
+    dates.push(d.toISOString().split('T')[0]); // YYYY-MM-DD in VN local date
   }
 
   const rawTrainsToFetch: { 
@@ -126,8 +126,8 @@ export async function fetchAllAndCacheSchedules() {
         code: t.MacTau,
         maGaDi: t.MaGaDi, tenGaDi: t.TenGaDi,
         maGaDen: t.MaGaDen, tenGaDen: t.TenGaDen,
-        ngayDi: t.NgayDi.split('T')[0] + 'T' + t.GioDi + ':00',
-        ngayDen: t.NgayDen.split('T')[0] + 'T' + t.GioDen + ':00'
+        ngayDi: t.NgayDi.split('T')[0] + 'T' + t.GioDi + ':00+07:00',
+        ngayDen: t.NgayDen.split('T')[0] + 'T' + t.GioDen + ':00+07:00'
       });
     });
     await sleep(200);
@@ -164,8 +164,8 @@ export async function fetchAllAndCacheSchedules() {
         return {
           MaGa: l.MaGa,
           TenGa: l.TenGa,
-          NgayGioDi: `${depDateStr}T${l.GioDi}:00`,
-          NgayGioDen: `${arrDateStr}T${l.GioDen}:00`
+          NgayGioDi: `${depDateStr}T${l.GioDi}:00+07:00`,
+          NgayGioDen: `${arrDateStr}T${l.GioDen}:00+07:00`
         };
       });
     } else {
@@ -176,7 +176,7 @@ export async function fetchAllAndCacheSchedules() {
       stops = [
         { MaGa: t.maGaDi, TenGa: t.tenGaDi, NgayGioDi: t.ngayDi, NgayGioDen: t.ngayDi },
         { MaGa: t.maGaDen, TenGa: t.tenGaDen, NgayGioDi: t.ngayDen, NgayGioDen: t.ngayDen }
-      ];
+      ]; // ngayDi/ngayDen already have +07:00 suffix
     }
 
     const cacheKey = `${t.date}_${t.code}`;
