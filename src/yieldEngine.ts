@@ -10,6 +10,7 @@ interface SegTime {
 }
 
 interface ProcessedTrain {
+  tauId: number;  // unique per entry — trainCode alone is not unique across days
   code: string;
   isPriority: boolean;
   stops: SegTime[];
@@ -23,6 +24,7 @@ export function resolveTrainConflicts(schedules: TrainSchedule[]): TrainSchedule
   // Convert standard schedules to internal ProcessedTrain with timestamps
   const pTrains: ProcessedTrain[] = schedules.map(s => {
     return {
+      tauId: s.tauId,
       code: s.trainCode,
       isPriority: s.trainCode.toUpperCase().startsWith('SE'),
       stops: s.stations.map(st => ({
@@ -100,8 +102,9 @@ export function resolveTrainConflicts(schedules: TrainSchedule[]): TrainSchedule
   }
 
   // Re-map ProcessedTrains back to TrainSchedules
+  // Match by tauId (unique) — NOT trainCode, which can repeat across days (e.g. SP8 on 3 days)
   return schedules.map(s => {
-    const pt = pTrains.find(p => p.code === s.trainCode);
+    const pt = pTrains.find(p => p.tauId === s.tauId);
     if (!pt) return s;
 
     // Output with stringified shifted times
